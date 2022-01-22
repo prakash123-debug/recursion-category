@@ -1,13 +1,18 @@
 const model = require('../models');
-
+const fs = require('fs');
 async function saveCategory(req,res){
-
+    if(req.file)
+    {
+        var img = req.file.path;
+    }
     const categoryData = {
         name: req.body.name,
         slug: req.body.slug,
-        image: req.body.image,
-        parentId: req.body.parentId,
+        image: req.file.path,
+        parentId: req.body.parentId == '' ? null : req.body.parentId,
     }
+    console.log(categoryData);
+   
     try {
         if (categoryData.parentId == null || categoryData.parentId == '') {
             let newCategory = await model.Category.create(categoryData);
@@ -41,6 +46,23 @@ async function saveCategory(req,res){
         })
     }
 }
+
+async function ShowAllCategories(req,res){
+    
+    try{
+        const allCategory=await model.Category.findAll();
+        if(allCategory){
+            res.status(200).json({
+                data:allCategory
+            })
+        }
+    }catch(err){
+        res.status(500).json({
+            error:err.message
+        }) 
+    }
+}
+
 async function getCategory(req,res){
     try{
         const AllCategory = await model.Category.findAll({
@@ -95,7 +117,8 @@ async function AllCategories(data,parentId=null){
 
 module.exports = {
     saveCategory:saveCategory,
-    getCategory:getCategory
+    getCategory:getCategory,
+    ShowAllCategories:ShowAllCategories
     
 }
 
