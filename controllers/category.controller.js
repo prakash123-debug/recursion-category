@@ -8,10 +8,11 @@ async function saveCategory(req,res){
     const categoryData = {
         name: req.body.name,
         slug: req.body.slug,
-        image: req.file.path,
+        image: req.file ? req.file.path : null,
         parentId: req.body.parentId == '' ? null : req.body.parentId,
     }
-    console.log(categoryData);
+    console.log("categoryData",categoryData);
+
    
     try {
         if (categoryData.parentId == null || categoryData.parentId == '') {
@@ -104,7 +105,7 @@ async function AllCategories(data,parentId=null){
              id:dataCat.id,
              name:dataCat.name,
              image:dataCat.image,
-             children:await AllCategories(data,dataCat.id)
+             child:await AllCategories(data,dataCat.id)
          })
 
      }
